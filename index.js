@@ -38,7 +38,26 @@ async function run() {
             const result = await favouriteCountryCollection.insertOne(country);
 
             res.send(result);
-        });
+        }),
+            app.get('/favourites/:email', async (req, res) => {
+                const email = req.params.email;
+                const query = { userEmail: email };
+                const myFavouriteProducts = await favouriteCountryCollection.find(query).map(data => data.data).toArray();
+                res.send(myFavouriteProducts);
+            }),
+            app.put('/update/favourite', async (req, res) => {
+                const filter = { _id: new ObjectId('652b02b9abacf549162eae54') };
+                const countries = req.body;
+                const options = { upsert: true };
+                const updatedDoc = {
+                    $set: {
+                        countries: countries
+                    }
+                }
+                const result = await favouriteCountryCollection.updateOne(filter, updatedDoc, options);
+                res.send(result);
+            })
+            ;
     } finally {
     }
 }
