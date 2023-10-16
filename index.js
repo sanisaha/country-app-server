@@ -42,20 +42,20 @@ async function run() {
             app.get('/favourites/:email', async (req, res) => {
                 const email = req.params.email;
                 const query = { userEmail: email };
-                const myFavouriteProducts = await favouriteCountryCollection.find(query).map(data => data.data).toArray();
-                res.send(myFavouriteProducts);
+                const myFavouriteCountries = await favouriteCountryCollection.find(query).map(data => data.data).toArray();
+                res.send(myFavouriteCountries);
             }),
-            app.put('/update/favourite', async (req, res) => {
-                const filter = { _id: new ObjectId('652b02b9abacf549162eae54') };
-                const countries = req.body;
-                const options = { upsert: true };
-                const updatedDoc = {
-                    $set: {
-                        countries: countries
-                    }
-                }
-                const result = await favouriteCountryCollection.updateOne(filter, updatedDoc, options);
+            app.delete('/deleteonecountry/:data', async (req, res) => {
+                const data = req.params.data.split('&');
+                const email = data[0].split('=')[1];
+                const country = data[1].split('=')[1];
+                const query1 = { userEmail: email };
+                const query2 = { data: country };
+                const query = { $and: [query1, query2] };
+                const result = await favouriteCountryCollection.deleteOne(query);
                 res.send(result);
+
+
             })
             ;
     } finally {
