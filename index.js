@@ -54,9 +54,13 @@ async function run() {
                 const query = { $and: [query1, query2] };
                 const result = await favouriteCountryCollection.deleteOne(query);
                 res.send(result);
-
-
             })
+        app.delete('/deleteallcountry/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { userEmail: email };
+            const result = await favouriteCountryCollection.deleteMany(query);
+            res.send(result);
+        })
             ;
     } finally {
     }
