@@ -26,42 +26,44 @@ async function run() {
     try {
         const db = client.db("country-app");
         const favouriteCountryCollection = db.collection("favourites");
+
         app.get("/favourites", async (req, res) => {
             const cursor = favouriteCountryCollection.find({});
             const countries = await cursor.toArray();
-
             res.send({ status: true, data: countries });
         });
+
         app.post("/addfavourite", async (req, res) => {
             const country = req.body;
-
             const result = await favouriteCountryCollection.insertOne(country);
-
             res.send(result);
-        }),
-            app.get('/favourites/:email', async (req, res) => {
-                const email = req.params.email;
-                const query = { userEmail: email };
-                const myFavouriteCountries = await favouriteCountryCollection.find(query).map(data => data.data).toArray();
-                res.send(myFavouriteCountries);
-            }),
-            app.delete('/deleteonecountry/:data', async (req, res) => {
-                const data = req.params.data.split('&');
-                const email = data[0].split('=')[1];
-                const country = data[1].split('=')[1];
-                const query1 = { userEmail: email };
-                const query2 = { data: country };
-                const query = { $and: [query1, query2] };
-                const result = await favouriteCountryCollection.deleteOne(query);
-                res.send(result);
-            })
+        });
+
+        app.get('/favourites/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { userEmail: email };
+            const myFavouriteCountries = await favouriteCountryCollection.find(query).map(data => data.data).toArray();
+            res.send(myFavouriteCountries);
+        });
+
+        app.delete('/deleteonecountry/:data', async (req, res) => {
+            const data = req.params.data.split('&');
+            const email = data[0].split('=')[1];
+            const country = data[1].split('=')[1];
+            const query1 = { userEmail: email };
+            const query2 = { data: country };
+            const query = { $and: [query1, query2] };
+            const result = await favouriteCountryCollection.deleteOne(query);
+            res.send(result);
+        });
+
         app.delete('/deleteallcountry/:email', async (req, res) => {
             const email = req.params.email;
             const query = { userEmail: email };
             const result = await favouriteCountryCollection.deleteMany(query);
             res.send(result);
-        })
-            ;
+        });
+
     } finally {
     }
 }
